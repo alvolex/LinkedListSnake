@@ -5,20 +5,44 @@ using UnityEngine;
 
 public class AStar : MonoBehaviour
 {
-
     [SerializeField] private List<Vector2> currentPath = new List<Vector2>();
-
     public static event Action<List<Vector2>> OnPathFound;
+
+    private Vector2 ifTargetIsUnreachableMoveHere = new Vector2(14.5f, 9.5f);
     
-    public Transform seeker, target;
+    public Transform seeker/*, target*/;
+    public Vector2 target;
     Grid grid;
 
-    void Awake() {
-        grid = GetComponent<Grid> ();
+    void Awake()
+    {
+        Grid.OnGridCreated += HandleGridCreated;
     }
 
-    void Start() {
-        FindPath (seeker.position, target.position);
+    private void Start()
+    {
+        grid = GetComponent<Grid>();
+        target = GetComponent<Grid>().FoodPos;
+        FindPath (seeker.position, target);
+    }
+
+    private void OnDestroy()
+    {
+        Grid.OnGridCreated -= HandleGridCreated;
+    }
+
+    private void HandleGridCreated()
+    {
+        grid = GetComponent<Grid>();
+        target = GetComponent<Grid>().FoodPos;
+
+        /*if (targetUnreachable)
+        {
+            //FindPath(seeker.position, ifTargetIsUnreachableMoveHere);
+            OnGameOver?.Invoke();
+            return;
+        }*/
+        FindPath (seeker.position, target);
     }
 
     void FindPath(Vector3 startPos, Vector3 targetPos) {
@@ -79,7 +103,7 @@ public class AStar : MonoBehaviour
         {
             currentPath.Add(new Vector2(node.GridX - 13.5f, node.GridY - 7.5f));
         }
-        
+
         OnPathFound?.Invoke(currentPath);
         grid.Path = path;
     }

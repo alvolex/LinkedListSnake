@@ -14,6 +14,9 @@ public class SnakeMovementAstar : MonoBehaviour
 
     //Used for tail to follow snake head (Hidden because we progrematically access these)
     [HideInInspector] public UnityEvent SnakeHasMoved; 
+    
+    public static event Action OnGameOver;
+    
     private Vector3 lastPos;
     private Vector3 tailLastPos;
 
@@ -25,9 +28,11 @@ public class SnakeMovementAstar : MonoBehaviour
     private Vector3 continueLastMovement;
 
     [SerializeField]private List<Vector2> pathToFollow = new List<Vector2>();
+    private List<Vector2> allTailPositions;
 
+    //Getters
     public MyLinkedList<GameObject> mySnakeLL = new MyLinkedList<GameObject>();
-
+    public List<Vector2> AllTailPositions => allTailPositions;
     public Vector3 TailLastPos => tailLastPos;
 
     private enum Direction
@@ -77,15 +82,17 @@ public class SnakeMovementAstar : MonoBehaviour
         {
             if (pathToFollow.Count > 0)
             {
-                snakeHeadMover.position = pathToFollow[0];
-                pathToFollow.RemoveAt(0);
-                
-                //todo make snake go to food instead and then add all tail positions to the non-walkable gridset
-                
-                
                 lastPos = snakeHeadMover.position; //Save a reference to our position before we move. Used to update tail.
+                
+                snakeHeadMover.position = pathToFollow[0]; //Move snake head to first "waypoint"
+                pathToFollow.RemoveAt(0); //remove current waypoint after moving to it
+
                 UpdateTailPositions(); //Update all the tail positions using our linked list implementation
                 SnakeHasMoved.Invoke(); //Tells our tail that we have moved
+            }
+            else
+            {
+                OnGameOver?.Invoke();
             }
             
             yield return new WaitForSeconds(timeBetweenMoves);
@@ -100,27 +107,37 @@ public class SnakeMovementAstar : MonoBehaviour
         {
             if (curNode == mySnakeLL.First() && curNode.next != null)
             {
-                TailPiece nextPiece = curNode.next.data.GetComponent<TailPiece>();
+                TailPieceAStar nextPiece = curNode.next.data.GetComponent<TailPieceAStar>();
                 nextPiece.LastPos = nextPiece.transform.position;
                 curNode.next.data.transform.position = lastPos;
             }
             else if (curNode.next != null)
             {
-                TailPiece nextPiece = curNode.next.data.GetComponent<TailPiece>(); //Get ref to next piece
+                TailPieceAStar nextPiece = curNode.next.data.GetComponent<TailPieceAStar>(); //Get ref to next piece
                 nextPiece.LastPos = nextPiece.transform.position; //Set next pieces last pos to be it's current pos
-                nextPiece.transform.position = curNode.data.GetComponent<TailPiece>().LastPos; // Update the tail nodes current pos
+                nextPiece.transform.position = curNode.data.GetComponent<TailPieceAStar>().LastPos; // Update the tail nodes current pos
             }
             curNode = curNode.next;
         }
         
         //Keep a reference to where we should add the next tail piece
-        if (mySnakeLL.Last().data.TryGetComponent<TailPiece>(out TailPiece tp))
+        if (mySnakeLL.Last().data.TryGetComponent<TailPieceAStar>(out TailPieceAStar tp))
         {
             tailLastPos = tp.LastPos;
         }
         else
         {
             tailLastPos = lastPos;
+        }
+        
+        //Get a list of all the positions of the tail so we can set these as not-walkable
+        curNode = mySnakeLL.First();
+        allTailPositions = new List<Vector2>();
+        while (curNode.next != null)
+        {
+            TailPieceAStar curTail = curNode.next.data.GetComponent<TailPieceAStar>();
+            allTailPositions.Add(curTail.transform.position);
+            curNode = curNode.next;
         }
     }
 }

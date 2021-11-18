@@ -14,12 +14,21 @@ public class GameOverHandler : MonoBehaviour
     {
         TailPiece.OnGameEnd += HandleGameOver;
         WallCollision.OnGameOver += HandleGameOver;
+        SnakeMovementAstar.OnGameOver += AStarGameOver;
     }
-
+    
     private void OnDestroy()
     {
         TailPiece.OnGameEnd -= HandleGameOver;
         WallCollision.OnGameOver -= HandleGameOver;
+        SnakeMovementAstar.OnGameOver -= AStarGameOver;
+    }
+    
+    private void AStarGameOver()
+    {
+        gameOverCanvas.gameObject.SetActive(true);
+        Time.timeScale = 0f;
+        scoreText.text = $"No path available to food :(";
     }
 
     private void HandleGameOver(int score)

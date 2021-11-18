@@ -3,41 +3,65 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using Random = UnityEngine.Random;
+
 
 public class Grid : MonoBehaviour
 {
+    [SerializeField] private SnakeMovementAstar player;
+    
     [SerializeField] Vector2 gridWorldSize;
     [SerializeField] float nodeRadius;
-    [SerializeField] LayerMask unwalkableMask;
+    [SerializeField] private GameObject gridParent;
 
     [SerializeField] private GameObject floorPrefab;
-
+    [SerializeField] private GameObject foodPrefab;
+    
+    public static event Action OnGridCreated;
+    
     private Node[,] grid;
     [SerializeField] private List<Node> path;
+
+    private Vector2 foodPos;
 
     private float nodeDiameter;
     private int gridSizeX, gridSizeY;
 
+    private List<Vector2> positionsToSpawnFoodOn = new List<Vector2>();
+
+    //Getters
+    public Vector2 FoodPos => foodPos;
     public List<Node> Path
     {
         get => path;
         set => path = value;
     }
 
-    private void Start()
+    private void Awake()
     {
+        Time.timeScale = 1f;
         nodeDiameter = nodeRadius /* * 2*/;
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
 
         CreateGrid();
+        FoodEaten.OnFoodEaten += CreateGrid;
+    }
+
+    private void OnDestroy()
+    {
+        FoodEaten.OnFoodEaten -= CreateGrid;
     }
 
     private void CreateGrid()
     {
+        positionsToSpawnFoodOn = new List<Vector2>(); //Reset list so we don't store old positions
+        
         grid = new Node[gridSizeX, gridSizeY];
         Vector2 worldBottomLeft =
             (Vector2)transform.position - Vector2.right * gridWorldSize.x / 2 - Vector2.up * gridWorldSize.y / 2;
+
+        List<Vector2> tailPositions = player.AllTailPositions;
 
         for (int x = 0; x < gridSizeX; x++)
         {
@@ -46,10 +70,25 @@ public class Grid : MonoBehaviour
                 Vector2 worldPoint = new Vector2(worldBottomLeft.x + (x * nodeDiameter * nodeRadius), worldBottomLeft.y + (y * nodeDiameter * nodeRadius));
                 worldPoint = new Vector2(worldPoint.x + 0.5f, worldPoint.y + 0.5f);
 
-                grid[x, y] = new Node(true, worldPoint, x, y);
-                Instantiate(floorPrefab, worldPoint, Quaternion.identity);
+                if (tailPositions !=null && tailPositions.Contains(worldPoint))
+                {
+                    grid[x, y] = new Node(false, worldPoint, x, y);
+                }
+                else
+                {
+                    grid[x, y] = new Node(true, worldPoint, x, y);
+                    positionsToSpawnFoodOn.Add(worldPoint);
+                }
+                Instantiate(floorPrefab, worldPoint, Quaternion.identity, gridParent.transform);
             }
         }
+
+        int getRandomPointToSpawnFoodOn = Random.Range(0, positionsToSpawnFoodOn.Count - 1);
+        Instantiate(foodPrefab, positionsToSpawnFoodOn[getRandomPointToSpawnFoodOn], Quaternion.identity);
+        foodPos = positionsToSpawnFoodOn[getRandomPointToSpawnFoodOn];
+        
+        
+        OnGridCreated?.Invoke();
     }
 
     public List<Node> GetNeighbours(Node node)
@@ -114,6 +153,5 @@ public class Grid : MonoBehaviour
                 Gizmos.DrawCube(n.WorldPos, Vector3.one * (nodeDiameter-.1f));   
             }
         }
-        
     }
 }
