@@ -10,9 +10,11 @@ In the "Standard" mode we play a regular game of snake. We're allowed to move th
 
 ## Pathfinding Game Mode
 
-In this mode the Snake moves by itself using the A* pathfinding algorithm to find a path to where the food has spawned. Once the food has been taken we check for a new path to wherever the food re-spawned at. If there is no valid path then we get a game-over screen.
+In this mode the Snake moves by itself using the A* pathfinding algorithm to find a path to where the food has spawned. Once the food has been taken we check for a new path to wherever the food re-spawned at. If there is no valid path then we get a game-over screen the snake will try to find an empty tile and move towards it. Currently it does this in order LEFT, RIGHT, UP, DOWN. 
 
-Future improvements for this mode would be to keep moving even if there is no path as long as there are open tiles where we can move to, then continuously check if a path to the food becomes available.
+Future improvements on this would be to try and figure out a better way for the snake to move when it can't get a direct path to the food. The current implementation of trying to go Left, right, up or down is kind of "dirty" in the sense that there are definitely a better path than to just randomly go in these directions.
+
+To change the movement speed of the snake go to the SnakeAstar object in the scene / prefab and change the "Time between moves". The snake gets gradually faster, so if you want to lock it to a slower speed also change the "Min time between moves" to the same value. I'd recommend not going under 0.03 as I've noticed some issues with triggering the "OnTriggerEnter" on the foods at these speeds.
 
 ## In editor
 
