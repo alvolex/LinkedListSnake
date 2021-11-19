@@ -367,7 +367,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   snakeHead: {fileID: 1675026573}
-  timeBetweenMoves: 0.025
+  timeBetweenMoves: 0.05
   minTimeBetweenMoves: 0.05
   SnakeHasMoved:
     m_PersistentCalls:

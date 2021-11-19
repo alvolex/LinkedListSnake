@@ -454,6 +454,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1518164302177756202, guid: df394a76169a3cc409be06e688a1c341, type: 3}
+      propertyPath: timeBetweenMoves
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 2763129321119950864, guid: df394a76169a3cc409be06e688a1c341, type: 3}
       propertyPath: m_Name
       value: Snake
