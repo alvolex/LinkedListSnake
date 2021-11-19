@@ -10,7 +10,7 @@ In the "Standard" mode we play a regular game of snake. We're allowed to move th
 
 ## Pathfinding Game Mode
 
-In this mode the Snake moves by itself using the A* pathfinding algorithm to find a path to where the food has spawned. Once the food has been taken we check for a new path to wherever the food re-spawned at. If there is no valid path then we get a game-over screen the snake will try to find an empty tile and move towards it. Currently it does this in order LEFT, RIGHT, UP, DOWN. 
+In this mode the Snake moves by itself using the A* pathfinding algorithm to find a path to where the food has spawned. Once the food has been taken we check for a new path to wherever the food re-spawned at. If there is no valid path then the snake will try to find an empty tile and move towards it. Currently it does this in order LEFT, RIGHT, UP, DOWN. If no path is available we get a game-over screen.
 
 Future improvements on this would be to try and figure out a better way for the snake to move when it can't get a direct path to the food. The current implementation of trying to go Left, right, up or down is kind of "dirty" in the sense that there are definitely a better path than to just randomly go in these directions.
 
