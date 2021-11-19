@@ -223,8 +223,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5944782789130630884}
-  - component: {fileID: 1518164302177756202}
-  - component: {fileID: 3695486180081129546}
+  - component: {fileID: 1809797527}
+  - component: {fileID: 1809797528}
   m_Layer: 0
   m_Name: SnakeAstar
   m_TagString: Player
@@ -247,7 +247,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1518164302177756202
+--- !u!114 &1809797527
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -256,16 +256,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 2763129321119950864}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba9893f217a838348af4ad28c8310aac, type: 3}
+  m_Script: {fileID: 11500000, guid: abd84ff58815f65468dd756fe0de2b67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   snakeHead: {fileID: 1518164302724617288}
-  timeBetweenMoves: 0.15
+  timeBetweenMoves: 0.05
   minTimeBetweenMoves: 0.05
+  grid: {fileID: 0}
   SnakeHasMoved:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &3695486180081129546
+  pathToFollow: []
+--- !u!114 &1809797528
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -274,11 +276,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2763129321119950864}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c42732ace075e0c449e11abc85a4baa7, type: 3}
+  m_Script: {fileID: 11500000, guid: ff7a99942e99bda46adb5175f201a934, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  snakeHead: {fileID: 1518164302177756202}
-  tailPrefab: {fileID: 4849653637458688696, guid: 11eb1bc34c8931d4c881b4d9b0f850fc, type: 3}
+  snakeHead: {fileID: 1809797527}
+  tailPrefab: {fileID: 4849653637458688696, guid: c9c7a5255a8b86b4ab6c219a2e3a1851, type: 3}
 --- !u!1 &7624035761063983997
 GameObject:
   m_ObjectHideFlags: 0
@@ -376,7 +378,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2360498280783692537
 Transform:
   m_ObjectHideFlags: 0

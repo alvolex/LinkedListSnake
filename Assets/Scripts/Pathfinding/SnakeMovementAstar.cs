@@ -12,6 +12,8 @@ public class SnakeMovementAstar : MonoBehaviour
     [SerializeField] private float timeBetweenMoves = 0.3f;
     [SerializeField] private float minTimeBetweenMoves = 0.05f;
 
+    [SerializeField] private Grid grid;
+
     //Used for tail to follow snake head (Hidden because we progrematically access these)
     [HideInInspector] public UnityEvent SnakeHasMoved; 
     
@@ -80,23 +82,64 @@ public class SnakeMovementAstar : MonoBehaviour
     {
         while (true)
         {
+            lastPos = snakeHeadMover.position; //Save a reference to our position before we move. Used to update tail.
+            
             if (pathToFollow.Count > 0)
             {
-                lastPos = snakeHeadMover.position; //Save a reference to our position before we move. Used to update tail.
-                
                 snakeHeadMover.position = pathToFollow[0]; //Move snake head to first "waypoint"
                 pathToFollow.RemoveAt(0); //remove current waypoint after moving to it
 
                 UpdateTailPositions(); //Update all the tail positions using our linked list implementation
                 SnakeHasMoved.Invoke(); //Tells our tail that we have moved
+                grid.RecalculateGrid();
             }
             else
             {
-                OnGameOver?.Invoke();
+                //Try to move right
+                bool hasMoved = false;
+                Vector2 posTocheck = (Vector2)snakeHeadMover.transform.position + Vector2.right;
+                if (grid.CheckIfWalkable(posTocheck) && hasMoved == false)
+                {
+                    hasMoved = MoveToNewPosAndSeeIfWeCanFindAPath(posTocheck);
+                }
+                //Try to move left
+                posTocheck = (Vector2)snakeHeadMover.transform.position + Vector2.left;
+                if (grid.CheckIfWalkable(posTocheck) && hasMoved == false)
+                {
+                    hasMoved = MoveToNewPosAndSeeIfWeCanFindAPath(posTocheck);
+                }
+                //Try to move up
+                posTocheck = (Vector2)snakeHeadMover.transform.position + Vector2.up;
+                if (grid.CheckIfWalkable(posTocheck) && hasMoved == false)
+                {
+                    hasMoved = MoveToNewPosAndSeeIfWeCanFindAPath(posTocheck);
+                }
+                //Try to move down
+                posTocheck = (Vector2)snakeHeadMover.transform.position + Vector2.down;
+                if (grid.CheckIfWalkable(posTocheck) && hasMoved == false)
+                {
+                    hasMoved = MoveToNewPosAndSeeIfWeCanFindAPath(posTocheck);
+                }
+
+                if (!hasMoved)
+                {
+                    OnGameOver?.Invoke();
+                }
             }
             
             yield return new WaitForSeconds(timeBetweenMoves);
         }
+    }
+
+    private bool MoveToNewPosAndSeeIfWeCanFindAPath(Vector2 posTocheck)
+    {
+        bool hasMoved;
+        snakeHeadMover.position = posTocheck;
+        UpdateTailPositions();
+        SnakeHasMoved.Invoke();
+        hasMoved = true;
+        grid.RecalculateGrid();
+        return hasMoved;
     }
 
     private void UpdateTailPositions()

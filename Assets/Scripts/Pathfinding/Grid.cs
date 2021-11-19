@@ -96,9 +96,48 @@ public class Grid : MonoBehaviour
         int getRandomPointToSpawnFoodOn = Random.Range(0, positionsToSpawnFoodOn.Count - 1);
         Instantiate(foodPrefab, positionsToSpawnFoodOn[getRandomPointToSpawnFoodOn], Quaternion.identity);
         foodPos = positionsToSpawnFoodOn[getRandomPointToSpawnFoodOn];
-        
-        
+
         OnGridCreated?.Invoke();
+    }
+    
+    public void RecalculateGrid()
+    {
+        grid = new Node[gridSizeX, gridSizeY];
+        Vector2 worldBottomLeft =
+            (Vector2)transform.position - Vector2.right * gridWorldSize.x / 2 - Vector2.up * gridWorldSize.y / 2;
+
+        List<Vector2> tailPositions = player.AllTailPositions;
+
+        for (int x = 0; x < gridSizeX; x++)
+        {
+            for (int y = 0; y < gridSizeY; y++)
+            {
+                Vector2 worldPoint = new Vector2(worldBottomLeft.x + (x * nodeDiameter * nodeRadius), worldBottomLeft.y + (y * nodeDiameter * nodeRadius));
+                worldPoint = new Vector2(worldPoint.x + 0.5f, worldPoint.y + 0.5f);
+
+                if (tailPositions !=null && tailPositions.Contains(worldPoint))
+                {
+                    grid[x, y] = new Node(false, worldPoint, x, y);
+                }
+                else
+                {
+                    grid[x, y] = new Node(true, worldPoint, x, y);
+                }
+            }
+        }
+        OnGridCreated?.Invoke();
+    }
+
+    public bool CheckIfWalkable(Vector2 pos)
+    {
+        Node nodeToCheck = NodeFromWorldPos(pos);
+        
+        if (nodeToCheck == null || pos.x < -14 || pos.x > 13 || pos.y < -8 || pos.y > 7 )
+        {
+            return false;
+        }
+        
+        return nodeToCheck.Walkable;
     }
 
     public List<Node> GetNeighbours(Node node)

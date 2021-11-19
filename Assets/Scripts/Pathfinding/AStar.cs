@@ -14,7 +14,7 @@ public class AStar : MonoBehaviour
 
     void Awake()
     {
-        Grid.OnGridCreated += HandleGridCreated;
+        Grid.OnGridCreated += HandlePathCreation;
     }
 
     private void Start()
@@ -26,10 +26,10 @@ public class AStar : MonoBehaviour
 
     private void OnDestroy()
     {
-        Grid.OnGridCreated -= HandleGridCreated;
+        Grid.OnGridCreated -= HandlePathCreation;
     }
 
-    private void HandleGridCreated()
+    private void HandlePathCreation()
     {
         grid = GetComponent<Grid>();
         target = GetComponent<Grid>().FoodPos;
