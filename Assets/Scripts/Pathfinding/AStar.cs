@@ -8,9 +8,7 @@ public class AStar : MonoBehaviour
     [SerializeField] private List<Vector2> currentPath = new List<Vector2>();
     public static event Action<List<Vector2>> OnPathFound;
 
-    private Vector2 ifTargetIsUnreachableMoveHere = new Vector2(14.5f, 9.5f);
-    
-    public Transform seeker/*, target*/;
+    public Transform seeker;
     public Vector2 target;
     Grid grid;
 
@@ -35,13 +33,6 @@ public class AStar : MonoBehaviour
     {
         grid = GetComponent<Grid>();
         target = GetComponent<Grid>().FoodPos;
-
-        /*if (targetUnreachable)
-        {
-            //FindPath(seeker.position, ifTargetIsUnreachableMoveHere);
-            OnGameOver?.Invoke();
-            return;
-        }*/
         FindPath (seeker.position, target);
     }
 
@@ -101,7 +92,7 @@ public class AStar : MonoBehaviour
 
         foreach (Node node in path)
         {
-            currentPath.Add(new Vector2(node.GridX - 13.5f, node.GridY - 7.5f));
+            currentPath.Add(new Vector2(node.GridX - 13.5f, node.GridY - 7.5f)); //Offset to match world-space 
         }
 
         OnPathFound?.Invoke(currentPath);
@@ -113,7 +104,9 @@ public class AStar : MonoBehaviour
         int dstY = Mathf.Abs(nodeA.GridY - nodeB.GridY);
 
         if (dstX > dstY)
+        {
             return 14*dstY + 10* (dstX-dstY);
+        }
         return 14*dstX + 10 * (dstY-dstX);
     }
 }

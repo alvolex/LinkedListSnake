@@ -26,6 +26,7 @@ public class Grid : MonoBehaviour
 
     private float nodeDiameter;
     private int gridSizeX, gridSizeY;
+    private bool shouldInstantiateGrid = true;
 
     private List<Vector2> positionsToSpawnFoodOn = new List<Vector2>();
 
@@ -77,11 +78,20 @@ public class Grid : MonoBehaviour
                 else
                 {
                     grid[x, y] = new Node(true, worldPoint, x, y);
-                    positionsToSpawnFoodOn.Add(worldPoint);
+                    
+                    if (!((x == 0 || x == gridSizeX - 1) || (y == 0 || y == gridSizeY -1)))
+                    {
+                        positionsToSpawnFoodOn.Add(worldPoint); // *Cheating* a little bit by never adding food to the edges of the map.
+                    }
                 }
-                Instantiate(floorPrefab, worldPoint, Quaternion.identity, gridParent.transform);
+
+                if (shouldInstantiateGrid)
+                {
+                    Instantiate(floorPrefab, worldPoint, Quaternion.identity, gridParent.transform);
+                }
             }
         }
+        shouldInstantiateGrid = false;
 
         int getRandomPointToSpawnFoodOn = Random.Range(0, positionsToSpawnFoodOn.Count - 1);
         Instantiate(foodPrefab, positionsToSpawnFoodOn[getRandomPointToSpawnFoodOn], Quaternion.identity);
