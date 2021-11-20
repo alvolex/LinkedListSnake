@@ -228,6 +228,10 @@ PrefabInstance:
       propertyPath: grid
       value: 
       objectReference: {fileID: 696569734}
+    - target: {fileID: 1809797527, guid: 8c15472766152f84299aadb6c312b63a, type: 3}
+      propertyPath: timeBetweenMoves
+      value: 0.05
+      objectReference: {fileID: 0}
     - target: {fileID: 2763129321119950864, guid: 8c15472766152f84299aadb6c312b63a, type: 3}
       propertyPath: m_Name
       value: SnakeAstar

@@ -132,7 +132,7 @@ public class Grid : MonoBehaviour
     {
         Node nodeToCheck = NodeFromWorldPos(pos);
         
-        if (nodeToCheck == null || pos.x < -14 || pos.x > 13 || pos.y < -8 || pos.y > 7 )
+        if (nodeToCheck == null || pos.x < -14 || pos.x > 14 || pos.y < -8 || pos.y > 8 )
         {
             return false;
         }
